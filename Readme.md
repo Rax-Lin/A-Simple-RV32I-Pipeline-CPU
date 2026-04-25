@@ -1,6 +1,6 @@
 # A Simple RV32I Pipeline CPU
 This project is a RISC-V CPU implementation by Rax for learning pipeline CPU architecture.
-
+Waiting to be done
 ---------------------------
 ## 1 安裝工具 (Ubuntu / Debian)
 ```bash
