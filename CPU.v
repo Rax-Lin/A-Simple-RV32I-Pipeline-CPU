@@ -26,13 +26,17 @@ wire [XLEN-1:0] PC_o, PC_next, PC_add;
 wire [XLEN-1:0] instr_o; // instruction memory
 
 // IF stage signal
-wire [XLEN-1:0] id_PC, id_instr; 
-wire id_branch_hit, id_branch_taken; // from instruction fetch stage
+// PC_o, instr_o from IF stage to ID stage
+// from Branch Prediction Unit(BPU)
+wire branch_hit_i, branch_taken_i; // to instruction fetch stage
+
+
 
 // ID stage signal
 localparam REG_NUM = 32;
-wire [XLEN-1:0] id2exe_PC;
+wire [XLEN-1:0] id_PC, id_instr; 
 wire id_reg_we; // write enable signal for register file, to exe stage
+wire id_branch_hit, id_branch_taken; // from instruction fetch stage
 wire [6:0] id_opcode; // to control unit
 wire [4:0] id_rs1, id_rs2, id_rd; // to register file
 wire [2:0] id_funct3; 
@@ -42,6 +46,15 @@ wire [XLEN-1:0] id_rs1_data, id_rs2_data; // from register file
 wire [XLEN-1:0] id_imm; // from immediate generator
 
 // EX stage signal
+wire [XLEN-1:0] exe_PC, exe_instr;
+wire exe_reg_we; // write enable signal for register file, to MEM stage
+wire exe_branch_hit, exe_branch_taken; // from instruction fetch stage
+wire [4:0] exe_rs1, exe_rs2, exe_rd; 
+wire [2:0] exe_funct3;
+wire [6:0] exe_funct7;
+wire [3:0] exe_alu_control; // to ALU, from control unit
+wire [XLEN-1:0] exe_rs1_data, exe_rs2_data;
+wire [XLEN-1:0] exe_imm; // from immediate generator
 
 // MEM stage signal
 
@@ -50,8 +63,7 @@ wire wb_reg_we; // write enable signal for register file, from control unit
 wire [4:0] wb_rd; // write destination register address, from WB stage
 wire [XLEN-1:0] wb_rd_data; // write data, from WB
 
-// from Branch Prediction Unit(BPU)
-wire branch_hit_i, branch_taken_i; // to instruction fetch stage
+
 
 // jump and branch related signal
 wire [XLEN-1:0] branch_target_address, jump_target_address;
