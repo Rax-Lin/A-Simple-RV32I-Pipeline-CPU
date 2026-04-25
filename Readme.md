@@ -1,7 +1,9 @@
 # A Simple RV32I Pipeline CPU
+
 This project is a RISC-V CPU implementation by Rax for learning pipeline CPU architecture.
+The current goal is to run a small RV32I program in an end-to-end simulation on this CPU.
 Waiting to be done
----------------------------
+
 ## 1 安裝工具 (Ubuntu / Debian)
 ```bash
 sudo apt update
@@ -82,27 +84,29 @@ iverilog -g2012 -o build/cpu_sim *.v && vvp build/cpu_sim && gtkwave wave/cpu.vc
 ## 7 Waiting to be done :
 - Branch_Comparator.v
 - Branch_predictor.v
-- Control_Unit.v
 - CPU_tb.v
 - CPU.v
 - Data_Memory.v
 - Execution.v
 - Forwarding_Unit.v
 - Hazard_detection.v
-- Immediate_Generator.v
-- Instruction_Decode.v
 - Memory.v
-- Register_File.v
 - Write_Back.v
 
 
 ## 8 finish file
 - Adder.v
-- ALU_Control.v
 - ALU.v
+- Control_Unit.v
 - Mux2.v
 - Mux3.v
+- Immediate_Generator.v
+- Instruction_Decode.v
+- Instruction_Fetch.v
+- Instruction_Memory.v
+- Instruction_Parser.v
 - Program_Counter.v
+- Register_File.v
 
 ## References
 - David A. Patterson and John L. Hennessy, *Computer Organization and Design: The Hardware/Software Interface (RISC-V Edition)*, Morgan Kaufmann.
