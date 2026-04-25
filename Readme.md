@@ -103,3 +103,6 @@ iverilog -g2012 -o build/cpu_sim *.v && vvp build/cpu_sim && gtkwave wave/cpu.vc
 - Mux2.v
 - Mux3.v
 - Program_Counter.v
+
+## References
+- David A. Patterson and John L. Hennessy, *Computer Organization and Design: The Hardware/Software Interface (RISC-V Edition)*, Morgan Kaufmann.
