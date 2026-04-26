@@ -5,34 +5,47 @@ module Instruction_Decode#(
     input rst_i,
     input stall_i,
     input flush_i,
-    input branch_hit_i, // from instruction fetch stage
-    input branch_taken_i, // from instruction fetch stage
-    input reg_we_i, // write enable signal for register file
     input [XLEN-1:0] pc_i,  
     input [XLEN-1:0] instr_i, 
     input [4:0] rs1_i,
     input [4:0] rs2_i,
     input [4:0] rd_i,
-    input [2:0] funct3_i,
-    input [6:0] funct7_i,
     input [3:0] alu_control_i,
     input [XLEN-1:0] imm_i, // from immediate generator
     input [XLEN-1:0] rs1_data_i, 
     input [XLEN-1:0] rs2_data_i, 
+    input [1:0] alu_src1_i,
+    input [1:0] alu_src2_i,
+    // For Mem stage
+    input is_branch_i, // from control unit for branch decision
+    input is_jal_i,
+    input is_jalr_i,
+    input [2:0] branch_type_i, // from control unit for branch decision
+    input branch_hit_i, // from instruction fetch stage
+    input branch_taken_i, // from instruction fetch stage
+    // For WB stage
+    input reg_we_i, // write enable signal for register file
+
     output reg [XLEN-1:0] pc_o, 
     output reg [XLEN-1:0] instr_o,
-    output reg branch_hit_o, 
-    output reg branch_taken_o, 
-    output reg reg_we_o, 
     output reg [4:0] rs1_o, // to register file
     output reg [4:0] rs2_o, // to register file
     output reg [4:0] rd_o, 
-    output reg [2:0] funct3_o, // to EX stage and control unit
-    output reg [6:0] funct7_o, // to EX stage and control unit
     output reg [3:0] alu_control_o, // to ALU, from control unit
     output reg [XLEN-1:0] imm_o, 
     output reg [XLEN-1:0] rs1_data_o, 
-    output reg [XLEN-1:0] rs2_data_o 
+    output reg [XLEN-1:0] rs2_data_o,
+    output reg [1:0] alu_src1_o,
+    output reg [1:0] alu_src2_o,
+    // For Mem stage
+    output reg is_branch_o, // to exe stage for branch decision
+    output reg is_jal_o,
+    output reg is_jalr_o,
+    output reg [2:0] branch_type_o, // to exe stage for branch decision
+    output reg branch_hit_o, // to instruction fetch stage
+    output reg branch_taken_o, // to instruction fetch stage
+    // For WB stage 
+    output reg reg_we_o
 );
 
 always @(posedge clk_i)begin
@@ -41,64 +54,80 @@ always @(posedge clk_i)begin
         instr_o <= 32'h00000013; // NOP instruction
         branch_hit_o <= 0;
         branch_taken_o <= 0;
+        is_branch_o <= 0;
+        is_jal_o <= 0;
+        is_jalr_o <= 0;
+        branch_type_o <= 0;
         reg_we_o <= 0;
         rs1_o <= 0;
         rs2_o <= 0;
         rd_o <= 0;
-        funct3_o <= 0;
-        funct7_o <= 0;
         imm_o <= 0;
         rs1_data_o <= 0;
         rs2_data_o <= 0;
         alu_control_o <= 4'b1111; // NOP
+        alu_src1_o <= 2'b00; // rs1
+        alu_src2_o <= 2'b00; // rs2
     end
     else if(flush_i)begin
         pc_o <= pc_i;
         instr_o <= 32'h00000013; // NOP instruction
         branch_hit_o <= 0;
         branch_taken_o <= 0;
+        is_branch_o <= 0;
+        is_jal_o <= 0;
+        is_jalr_o <= 0;
+        branch_type_o <= 0;
         reg_we_o <= 0;
         rs1_o <= 0; 
         rs2_o <= 0;
         rd_o <= 0;
-        funct3_o <= 0;
-        funct7_o <= 0;
         imm_o <= 0;
         rs1_data_o <= 0;
         rs2_data_o <= 0;
         alu_control_o <= 4'b1111; // NOP
+        alu_src1_o <= 2'b00; // rs1
+        alu_src2_o <= 2'b00; // rs2
     end
     else if(stall_i)begin
         pc_o <= pc_o;
         instr_o <= instr_o;
         branch_hit_o <= branch_hit_o;
         branch_taken_o <= branch_taken_o;
+        is_branch_o <= is_branch_o;
+        is_jal_o <= is_jal_o;
+        is_jalr_o <= is_jalr_o;
+        branch_type_o <= branch_type_o;
         reg_we_o <= reg_we_o;
         rs1_o <= rs1_o; 
         rs2_o <= rs2_o;
         rd_o <= rd_o;
-        funct3_o <= funct3_o;
-        funct7_o <= funct7_o;
         imm_o <= imm_o;
         rs1_data_o <= rs1_data_o;
         rs2_data_o <= rs2_data_o;
         alu_control_o <= alu_control_o;
+        alu_src1_o <= alu_src1_o;
+        alu_src2_o <= alu_src2_o;
     end
     else begin
         pc_o <= pc_i;
         instr_o <= instr_i;
         branch_hit_o <= branch_hit_i;
         branch_taken_o <= branch_taken_i;
+        is_branch_o <= is_branch_i;
+        is_jal_o <= is_jal_i;
+        is_jalr_o <= is_jalr_i;
+        branch_type_o <= branch_type_i;
         reg_we_o <= reg_we_i;
         rs1_o <= rs1_i; 
         rs2_o <= rs2_i;
         rd_o <= rd_i;
-        funct3_o <= funct3_i;
-        funct7_o <= funct7_i;
         imm_o <= imm_i;
         rs1_data_o <= rs1_data_i;
         rs2_data_o <= rs2_data_i;
         alu_control_o <= alu_control_i;
+        alu_src1_o <= alu_src1_i;
+        alu_src2_o <= alu_src2_i;
     end
 end
 
