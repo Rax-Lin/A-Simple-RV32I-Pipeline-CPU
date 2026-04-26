@@ -246,36 +246,36 @@ Adder #(
     .XLEN(XLEN)
 ) exe_adder (
     .src1_i(exe_PC), // from ID stage
-    .src2_i(exe_imm << 1), // from ID stage
+    .src2_i(exe_imm), // from ID stage
     .sum_o(exe_branch_target_address) // to BPU
 );
 
 MUX3 #(
     .XLEN(XLEN)
 ) exe_forwardA_mux (
-    .in0(exe_rs1_data), // from ID stage
-    .in1(wb_rd_data), // from WB stage
-    .in2(), // MEM data, to be added later
+    .in0_i(exe_rs1_data), // from ID stage
+    .in1_i(wb_rd_data), // from WB stage
+    .in2_i(), // MEM data, to be added later
     .sel_i(), // forwarding control signal, to be added later
     .out_o(exe_forwardA_data) // to ALU src1 select
-)
+);
 
 MUX3 #(
     .XLEN(XLEN)
 ) exe_forwardB_mux (
-    .in0(exe_rs2_data), // from ID stage
-    .in1(wb_rd_data), // from WB stage
-    .in2(), // MEM data, to be added later
+    .in0_i(exe_rs2_data), // from ID stage
+    .in1_i(wb_rd_data), // from WB stage
+    .in2_i(), // MEM data, to be added later
     .sel_i(), // forwarding control signal, to be added later
     .out_o(exe_forwardB_data) // to ALU src2 select
-)
+);
 
 MUX3 #(
     .XLEN(XLEN)
 ) exe_alu_src1_mux (
-    .in0(exe_forwardA_data), // from ID stage
-    .in1(exe_PC), // from ID stage
-    .in2(0), // zero
+    .in0_i(exe_forwardA_data), // from ID stage
+    .in1_i(exe_PC), // from ID stage
+    .in2_i(0), // zero
     .sel_i(exe_alu_src1), // from control unit
     .out_o(exe_alu_src_output1) // to ALU src1
 );
@@ -283,9 +283,9 @@ MUX3 #(
 MUX3 #(
     .XLEN(XLEN)
 ) exe_alu_src2_mux (
-    .in0(exe_forwardB_data), // from ID stage
-    .in1(exe_imm), // from ID stage
-    .in2(4), // for PC + 4, used in JAL instruction
+    .in0_i(exe_forwardB_data), // from ID stage
+    .in1_i(exe_imm), // from ID stage
+    .in2_i(4), // for PC + 4, used in JAL instruction
     .sel_i(exe_alu_src2), // from control unit
     .out_o(exe_alu_src_output2) // to ALU src2
 );

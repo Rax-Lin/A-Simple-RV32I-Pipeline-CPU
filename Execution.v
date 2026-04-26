@@ -100,6 +100,6 @@ always @(posedge clk_i)begin
         rd_o <= rd_i;
         reg_we_o <= reg_we_i; 
     end
-
+end
 
 endmodule
