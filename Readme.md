@@ -16,7 +16,6 @@ gtkwave --version
 
 ## 2 建立常用資料夾
 ```bash
-cd /home/yes43014301/CPU
 mkdir -p build program wave
 ```
 
@@ -30,7 +29,6 @@ vvp build/cpu_sim
 
 如果你想自動抓目前資料夾所有 `.v`：
 ```bash
-cd /home/yes43014301/CPU
 find . -maxdepth 1 -name "*.v" | sort | xargs iverilog -g2012 -o build/cpu_sim
 vvp build/cpu_sim
 ```
@@ -39,7 +37,6 @@ vvp build/cpu_sim
 先準備指令檔，每行一個 32-bit binary instruction
 以下舉例:
 ```bash
-cd /home/yes43014301/CPU
 cat > program/prog.txt <<'EOT'
 00000000000100000000000010010011
 00000000001000000000000100010011
