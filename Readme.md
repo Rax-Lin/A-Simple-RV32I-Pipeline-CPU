@@ -1,8 +1,8 @@
 # A Simple RV32I Pipeline CPU
 
 - This project is a RISC-V CPU implementation by Rax for learning pipeline CPU architecture.
-- The current goal is to run a small RV32I program in an end-to-end simulation on this CPU.
-- Working progress : execution stage and branch 
+- The current goal is to run a small RV32I program in an end-to-end simulation on this CPU(ok).
+- Working progress : branch prediction unit and cache is not completed 
 - Waiting to be done
 
 ## 1 安裝工具 (Ubuntu / Debian)
@@ -24,14 +24,7 @@ mkdir -p build program wave
 有 `CPU_tb.v` (testbench) 與 `CPU.v`/其他模組後：
 
 ```bash
-cd /home/yes43014301/CPU
-
-iverilog -g2012 -o build/cpu_sim \
-  CPU_tb.v CPU.v \
-  Program_Counter.v Instruction_Fetch.v Instruction_Decode.v Execution.v Memory.v Write_Back.v \
-  ALU.v ALU_Control.v Control_Unit.v Register_File.v Immediate_Generator.v \
-  Instruction_Memory.v Data_Memory.v Branch_Comparator.v
-
+find . -maxdepth 1 -name "*.v" | sort | xargs iverilog -g2012 -o build/cpu_sim
 vvp build/cpu_sim
 ```
 
@@ -56,7 +49,6 @@ EOT
 
 之後重新編譯並執行：
 ```bash
-cd /home/yes43014301/CPU
 iverilog -g2012 -o build/cpu_sim *.v
 vvp build/cpu_sim
 ```
@@ -67,13 +59,11 @@ vvp build/cpu_sim
 執行模擬後，若 testbench 產生了 VCD（例如 `wave/cpu.vcd`）：
 
 ```bash
-cd /home/yes43014301/CPU
 gtkwave wave/cpu.vcd
 ```
 
 常見一鍵流程：
 ```bash
-cd /home/yes43014301/CPU
 iverilog -g2012 -o build/cpu_sim *.v && vvp build/cpu_sim && gtkwave wave/cpu.vcd
 ```
 
@@ -83,29 +73,27 @@ iverilog -g2012 -o build/cpu_sim *.v && vvp build/cpu_sim && gtkwave wave/cpu.vc
 - 沒有波形檔：確認 testbench 有 dump VCD（例如 `$dumpfile/$dumpvars`）。
 
 ## 7 Waiting to be done :
-- Branch_Comparator.v
 - Branch_predictor.v
-- CPU_tb.v
-- CPU.v
-- Data_Memory.v
-- Execution.v
-- Forwarding_Unit.v
-- Hazard_detection.v
-- Memory.v
-- Write_Back.v
+
 
 
 ## 8 finish file
 - Adder.v
 - ALU.v
+- Branch_Comparator.v
 - Control_Unit.v
-- Mux2.v
-- Mux3.v
+- Data_Memory.v
+- Execution.v
+- Forwarding_Unit.v
+- Hazard_detection.v
 - Immediate_Generator.v
 - Instruction_Decode.v
 - Instruction_Fetch.v
 - Instruction_Memory.v
 - Instruction_Parser.v
+- Memory.v
+- Mux2.v
+- Mux3.v
 - Program_Counter.v
 - Register_File.v
 

@@ -3,9 +3,9 @@ module Execution#(
 )(
     input clk_i,
     input rst_i,
-    input stall_i,
     input flush_i,
     input [XLEN-1:0] PC_i,
+    input [XLEN-1:0] pc_plus_4_i,
     input [XLEN-1:0] branch_target_address_i,
     input [XLEN-1:0] alu_result_i,
     input alu_is_zero_i,
@@ -17,11 +17,14 @@ module Execution#(
     input [2:0] branch_type_i, // from control unit for branch decision
     input branch_hit_i, // from instruction fetch stage
     input branch_taken_i, // from instruction fetch stage
+    input mem_read_i, // from ID stage
+    input mem_write_i, // from ID stage
     // For WB stage
     input reg_we_i, // write enable signal for register file
     input [4:0] rd_i, // destination register address, for write back stage
 
     output reg [XLEN-1:0] PC_o,
+    output reg [XLEN-1:0] pc_plus_4_o,
     output reg [XLEN-1:0] branch_target_address_o,
     output reg [XLEN-1:0] alu_result_o,
     output reg alu_is_zero_o,
@@ -33,6 +36,8 @@ module Execution#(
     output reg is_jal_o,
     output reg is_jalr_o,
     output reg [2:0] branch_type_o,
+    output reg mem_read_o,
+    output reg mem_write_o,
 
     // For WB stage
     output reg [4:0] rd_o, 
@@ -42,6 +47,7 @@ module Execution#(
 always @(posedge clk_i)begin
     if(rst_i)begin
         PC_o <= 0;
+        pc_plus_4_o <= 0;
         branch_target_address_o <= 0;
         alu_result_o <= 0;
         alu_is_zero_o <= 0;
@@ -53,10 +59,12 @@ always @(posedge clk_i)begin
         is_jalr_o <= 0;
         branch_type_o <= 0;
         rd_o <= 0;
+        mem_read_o <= 0;
+        mem_write_o <= 0;
         reg_we_o <= 0;
-    end
-    else if(flush_i)begin
+    end else if(flush_i) begin
         PC_o <= 0;
+        pc_plus_4_o <= 0;
         branch_target_address_o <= 0;
         alu_result_o <= 0;
         alu_is_zero_o <= 0;
@@ -68,25 +76,13 @@ always @(posedge clk_i)begin
         is_jalr_o <= 0;
         branch_type_o <= 0;
         rd_o <= 0;
-        reg_we_o <= 0; 
-    end
-    else if(stall_i)begin
-        PC_o <= PC_o;
-        branch_target_address_o <= branch_target_address_o;
-        alu_result_o <= alu_result_o;
-        alu_is_zero_o <= alu_is_zero_o;
-        alu_src_output2_o <= alu_src_output2_o;
-        branch_hit_o <= branch_hit_o;
-        branch_taken_o <= branch_taken_o;
-        is_branch_o <= is_branch_o;
-        is_jal_o <= is_jal_o;
-        is_jalr_o <= is_jalr_o;
-        branch_type_o <= branch_type_o;
-        rd_o <= rd_o;
-        reg_we_o <= reg_we_o; 
+        mem_read_o <= 0;
+        mem_write_o <= 0;
+        reg_we_o <= 0;
     end
     else begin
         PC_o <= PC_i;
+        pc_plus_4_o <= pc_plus_4_i;
         branch_target_address_o <= branch_target_address_i;
         alu_result_o <= alu_result_i;
         alu_is_zero_o <= alu_is_zero_i;
@@ -98,6 +94,8 @@ always @(posedge clk_i)begin
         is_jalr_o <= is_jalr_i;
         branch_type_o <= branch_type_i;
         rd_o <= rd_i;
+        mem_read_o <= mem_read_i;
+        mem_write_o <= mem_write_i;
         reg_we_o <= reg_we_i; 
     end
 end

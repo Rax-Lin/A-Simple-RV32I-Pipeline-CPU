@@ -7,6 +7,8 @@ module Instruction_Decode#(
     input flush_i,
     input [XLEN-1:0] pc_i,  
     input [XLEN-1:0] instr_i, 
+    input mem_read_i,
+    input mem_write_i,
     input [4:0] rs1_i,
     input [4:0] rs2_i,
     input [4:0] rd_i,
@@ -37,6 +39,8 @@ module Instruction_Decode#(
     output reg [XLEN-1:0] rs2_data_o,
     output reg [1:0] alu_src1_o,
     output reg [1:0] alu_src2_o,
+    output reg mem_read_o,
+    output reg mem_write_o,
     // For Mem stage
     output reg is_branch_o, // to exe stage for branch decision
     output reg is_jal_o,
@@ -63,6 +67,8 @@ always @(posedge clk_i)begin
         rs2_o <= 0;
         rd_o <= 0;
         imm_o <= 0;
+        mem_read_o <= 0;
+        mem_write_o <= 0;
         rs1_data_o <= 0;
         rs2_data_o <= 0;
         alu_control_o <= 4'b1111; // NOP
@@ -83,31 +89,35 @@ always @(posedge clk_i)begin
         rs2_o <= 0;
         rd_o <= 0;
         imm_o <= 0;
+        mem_read_o <= 0;
+        mem_write_o <= 0;
         rs1_data_o <= 0;
         rs2_data_o <= 0;
         alu_control_o <= 4'b1111; // NOP
         alu_src1_o <= 2'b00; // rs1
         alu_src2_o <= 2'b00; // rs2
     end
-    else if(stall_i)begin
-        pc_o <= pc_o;
-        instr_o <= instr_o;
-        branch_hit_o <= branch_hit_o;
-        branch_taken_o <= branch_taken_o;
-        is_branch_o <= is_branch_o;
-        is_jal_o <= is_jal_o;
-        is_jalr_o <= is_jalr_o;
-        branch_type_o <= branch_type_o;
-        reg_we_o <= reg_we_o;
-        rs1_o <= rs1_o; 
-        rs2_o <= rs2_o;
-        rd_o <= rd_o;
-        imm_o <= imm_o;
-        rs1_data_o <= rs1_data_o;
-        rs2_data_o <= rs2_data_o;
-        alu_control_o <= alu_control_o;
-        alu_src1_o <= alu_src1_o;
-        alu_src2_o <= alu_src2_o;
+    else if(stall_i)begin // On stall, insert a bubble (NOP) into the pipeline
+        pc_o <= pc_i;
+        instr_o <= 32'h00000013; // NOP instruction
+        branch_hit_o <= 0;
+        branch_taken_o <= 0;
+        is_branch_o <= 0;
+        is_jal_o <= 0;
+        is_jalr_o <= 0;
+        branch_type_o <= 0;
+        reg_we_o <= 0;
+        rs1_o <= 0; 
+        rs2_o <= 0;
+        rd_o <= 0;
+        imm_o <= 0;
+        rs1_data_o <= 0;
+        rs2_data_o <= 0;
+        mem_read_o <= 0;
+        mem_write_o <= 0;
+        alu_control_o <= 4'b1111; // NOP
+        alu_src1_o <= 2'b00; // rs1
+        alu_src2_o <= 2'b00; // rs2
     end
     else begin
         pc_o <= pc_i;
@@ -123,6 +133,8 @@ always @(posedge clk_i)begin
         rs2_o <= rs2_i;
         rd_o <= rd_i;
         imm_o <= imm_i;
+        mem_read_o <= mem_read_i;
+        mem_write_o <= mem_write_i;
         rs1_data_o <= rs1_data_i;
         rs2_data_o <= rs2_data_i;
         alu_control_o <= alu_control_i;

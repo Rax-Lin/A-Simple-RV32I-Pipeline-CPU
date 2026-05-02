@@ -35,4 +35,18 @@ always @(posedge clk_i) begin
     end
 end
 
+task print_regs;
+    integer i;
+    begin
+        $display("\n========================================");
+        $display("Final Register State Verification");
+        $display("========================================");
+        for (i = 1; i < REG_NUM; i = i + 1) begin
+            if (reg_file[i] != 0) begin
+                $display("x%0d (reg[%0d]): %d (0x%h)", i, i, reg_file[i], reg_file[i]);
+            end
+        end
+    end
+endtask
+
 endmodule   

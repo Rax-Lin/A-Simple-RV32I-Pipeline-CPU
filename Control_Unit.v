@@ -4,6 +4,8 @@ module Control_Unit(
     input [6:0] funct7_i,
     output reg_we_o, // to register file
     output is_branch_o, // to exe stage for branch decision
+    output mem_read_o,  // to data memory
+    output mem_write_o, // to data memory
     output is_jal_o,
     output is_jalr_o,
     output reg [2:0] branch_type_o, // see funct3 for branch type
@@ -27,6 +29,9 @@ assign reg_we_o = (opcode_i == 7'b0110011) || // R-type
 assign is_branch_o = (opcode_i == 7'b1100011); // branch instructions
 assign is_jal_o = (opcode_i == 7'b1101111);
 assign is_jalr_o = (opcode_i == 7'b1100111);
+
+assign mem_read_o = (opcode_i == 7'b0000011); // load instructions
+assign mem_write_o = (opcode_i == 7'b0100011); // store instructions
 
 always @(*) begin
     case(opcode_i)
@@ -113,18 +118,8 @@ always @(*) begin
 end
 
 always @(*)begin
-    case(func3_i) 
-        3'b000 : branch_type_o = 3'b001; // beq
-        3'b001 : branch_type_o = 3'b010; // bne
-        3'b100 : branch_type_o = 3'b100; // blt
-        3'b101 : branch_type_o = 3'b011; // bge
-        3'b110 : branch_type_o = 3'b110; // bltu
-        3'b111 : branch_type_o = 3'b101; // bgeu
-        default : branch_type_o = 3'b000; // not a branch instruction 
-    endcase
+    // For branch instructions, the branch type is determined by funct3.
+    branch_type_o = funct3_i;
 end
-
-
-
 
 endmodule

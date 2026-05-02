@@ -1,4 +1,4 @@
-module MUX3#(
+module MUX2#(
     parameter XLEN = 32
 )(
     input [XLEN-1:0] in0_i,
