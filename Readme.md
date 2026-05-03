@@ -1,11 +1,10 @@
 # A Simple RV32I Pipeline CPU
 
 - This project is a RISC-V CPU implementation by Rax for learning pipeline CPU architecture.
-- The current goal is to run a small RV32I program in an end-to-end simulation on this CPU(ok).
-- Working progress : branch prediction unit and cache is not completed 
-- Waiting to be done
+- The current goal is to run a small RV32I program in an end-to-end simulation on this CPU.
+- Work in progress: the branch prediction unit and cache are not completed yet.
 
-## 1 安裝工具 (Ubuntu / Debian)
+## 1 Install Tools (Ubuntu / Debian)
 ```bash
 sudo apt update
 sudo apt install -y iverilog gtkwave
@@ -14,67 +13,64 @@ iverilog -V
 gtkwave --version
 ```
 
-## 2 建立常用資料夾
+## 2 Create Common Directories
 ```bash
-mkdir -p build program wave
+mkdir -p build wave testcase
 ```
 
-## 3 編譯與執行模擬
-有 `CPU_tb.v` (testbench) 與 `CPU.v`/其他模組後：
+## 3 Compile and Run Simulation
+Verilog source files are located in `src/`. Use the following commands to compile and run:
 
 ```bash
-find . -maxdepth 1 -name "*.v" | sort | xargs iverilog -g2012 -o build/cpu_sim
+find src -maxdepth 1 -name "*.v" | sort | xargs iverilog -g2012 -I src -s CPU_tb -o build/cpu_sim
 vvp build/cpu_sim
 ```
 
-如果你想自動抓目前資料夾所有 `.v`：
+If you prefer an explicit top/testbench command:
 ```bash
-find . -maxdepth 1 -name "*.v" | sort | xargs iverilog -g2012 -o build/cpu_sim
+iverilog -g2012 -I src -s CPU_tb -o build/cpu_sim src/*.v
 vvp build/cpu_sim
 ```
 
-## 4 使用二進位 `.txt` 當程式輸入
-先準備指令檔，每行一個 32-bit binary instruction
-以下舉例:
+## 4 Use a Hex `.txt` Program Input
+Prepare an instruction file in `$readmemh` format (one 32-bit hex instruction per line):
 ```bash
-cat > program/prog.txt <<'EOT'
-00000000000100000000000010010011
-00000000001000000000000100010011
-00000000001000001000000110110011
+cat > testcase/program2.txt <<'EOT'
+00100093
+00200113
+002081B3
 EOT
 ```
 
-之後重新編譯並執行：
+Then recompile and run:
 ```bash
-iverilog -g2012 -o build/cpu_sim *.v
+iverilog -g2012 -I src -s CPU_tb -o build/cpu_sim src/*.v
 vvp build/cpu_sim
 ```
 
-註：你的 Verilog 記憶體模組通常會用 `$readmemb("program/prog.txt", mem);` 來讀這個檔案。
-
-## 5 Waveform 除錯 (GTKWave)
-執行模擬後，若 testbench 產生了 VCD（例如 `wave/cpu.vcd`）：
+## 5 Waveform Debugging (GTKWave)
+After simulation, if your testbench generates a VCD file (for example `wave/cpu.vcd`):
 
 ```bash
 gtkwave wave/cpu.vcd
 ```
 
-常見一鍵流程：
+One-line flow:
 ```bash
-iverilog -g2012 -o build/cpu_sim *.v && vvp build/cpu_sim && gtkwave wave/cpu.vcd
+iverilog -g2012 -I src -s CPU_tb -o build/cpu_sim src/*.v && vvp build/cpu_sim && gtkwave wave/cpu.vcd
 ```
 
-## 6 常見問題
-- `No top level modules`：代表目前還沒有完成 top/testbench module 宣告。
-- `Unable to open input file`：通常是 `program/prog.txt` 路徑錯誤。
-- 沒有波形檔：確認 testbench 有 dump VCD（例如 `$dumpfile/$dumpvars`）。
+## 6 Common Issues
+- `No top level modules`: The top/testbench module declaration is missing or incomplete.
+- `Unable to open input file`: Usually a wrong path to `testcase/program2.txt`.
+- No waveform file: Make sure your testbench dumps VCD (for example `$dumpfile/$dumpvars`).
 
-## 7 Waiting to be done :
+## 7 To-Do
 - Branch_predictor.v
 
 
 
-## 8 finish file
+## 8 Completed Files
 - Adder.v
 - ALU.v
 - Branch_Comparator.v
