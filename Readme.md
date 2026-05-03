@@ -3,6 +3,7 @@
 - This project is a RISC-V CPU implementation by Rax for learning pipeline CPU architecture.
 - The current goal is to run a small RV32I program in an end-to-end simulation on this CPU.
 - Work in progress: the branch prediction unit and cache are not completed yet.
+![Architecture](./architecture.jpg)
 
 ## 1 Install Tools (Ubuntu / Debian)
 ```bash

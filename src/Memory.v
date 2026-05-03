@@ -3,7 +3,6 @@ module Memory#(
 )(
     input clk_i,
     input rst_i,
-    // from MEM stage logic
     input [4:0] rd_i,
     input reg_we_i,
     input is_jal_i,
@@ -33,7 +32,7 @@ always @(posedge clk_i) begin
         wb_pc_plus_4_o <= 0;
         wb_alu_result_o <= 0;
         wb_data_memory_read_data_o <= 0;
-    end else begin // Normal operation, update with new values
+    end else begin 
         wb_rd_o <= rd_i;
         wb_reg_we_o <= reg_we_i;
         wb_is_jal_o <= is_jal_i;
